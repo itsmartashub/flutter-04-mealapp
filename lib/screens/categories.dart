@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:meal_app/data/dummy_data.dart';
+import 'package:meal_app/widgets/category_grid_item.dart';
+
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
 
@@ -10,6 +13,7 @@ class CategoriesScreen extends StatelessWidget {
         appBar: AppBar(title: const Text('Pick ur categories')),
         // body ja main page content
         body: GridView(
+          padding: const EdgeInsets.all(24),
           // da kazemo koliko kolona treba da bude. crossAxisCount je s leva u desno, dakle horizontalno imam dve kolone. childAspectRatio sto se odnosi na velicinu grid itema
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -17,13 +21,10 @@ class CategoriesScreen extends StatelessWidget {
             crossAxisSpacing: 20, // horizontalni razmak izmedju itema
             mainAxisSpacing: 20, // vertikalni razmak izmedju itema
           ),
-          children: const [
-            Text('1', style: TextStyle(color: Colors.white)),
-            Text('2', style: TextStyle(color: Colors.white)),
-            Text('3', style: TextStyle(color: Colors.white)),
-            Text('4', style: TextStyle(color: Colors.white)),
-            Text('5', style: TextStyle(color: Colors.white)),
-            Text('6', style: TextStyle(color: Colors.white)),
+          children: [
+            // availableCategories.map((category) => CategoryGridItem(category: category)).toList()  je isto sto i ovo dole sa for-in
+            for (final category in availableCategories)
+              CategoryGridItem(category: category)
           ],
         ));
   }
