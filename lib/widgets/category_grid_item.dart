@@ -3,15 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:meal_app/models/category.dart';
 
 class CategoryGridItem extends StatelessWidget {
-  const CategoryGridItem({super.key, required this.category});
+  const CategoryGridItem({
+    super.key,
+    required this.category,
+    required this.onSelectCategory,
+  });
 
   final Category category;
+  // prihvatamo ovaj parametar required this.onSelectCategory i bandujemo u ovaj property onSelectCategory koji pozivamo u onTap za InkWell
+  final void Function() onSelectCategory;
 
   @override
   Widget build(BuildContext context) {
     // Zelimo da items (child) budu tapables. Ali to mozemo i sa GestureDetector. Medjutim sa InkWell dobijemo isto sto i sa GestureDetector al ovde imamo i nice visually prikaz da se tapnulo
     return InkWell(
-      onTap: () => {},
+      onTap: onSelectCategory,
       splashColor: Theme.of(context).primaryColor,
       borderRadius: BorderRadius.circular(16),
       // koristimo Container widget jer nam on daje dosta opcija za bg color i bg decoration in general za ovaj widget
