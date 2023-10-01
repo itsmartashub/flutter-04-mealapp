@@ -4,9 +4,14 @@ import 'package:transparent_image/transparent_image.dart'; // kTransparentImage
 import 'package:meal_app/widgets/meal_item_trait.dart';
 
 class MealItem extends StatelessWidget {
-  const MealItem({super.key, required this.meal});
+  const MealItem({
+    super.key,
+    required this.meal,
+    required this.onSelectMeal,
+  });
 
   final Meal meal;
+  final void Function(Meal meal) onSelectMeal;
 
   // da prvo slovo bude veliko. meal.complexity.name.substring(1); secemo sve od 2. karaktera, dakle prvo slovo ne
   String get complexityText {
@@ -29,7 +34,10 @@ class MealItem extends StatelessWidget {
       // elevation mu dodje card shadow
       elevation: 2,
       child: InkWell(
-        onTap: () {},
+        // ne mozemo samo onTap: onSelectMeal jer treba da prosledimo meal. I sad gde god pozivamo ovaj MenuItem widget, dodajemmo za property i onSelectMeal
+        onTap: () {
+          onSelectMeal(meal);
+        },
         /* Stack ovo je widget koji moze da se koristi da se pozicionira vise widgeta jedno iznad drugog (jedan preko drugog valjda), ali ne jedan iznad drugog poredjani u column, vec direktno jedan iznad drugog. Recimo slika da bude kao bg, a text na top of it  */
         child: Stack(
           children: [
