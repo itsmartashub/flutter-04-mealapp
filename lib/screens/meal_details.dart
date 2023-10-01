@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:meal_app/models/meal.dart';
 
 class MealDetailsScreen extends StatelessWidget {
-  const MealDetailsScreen({super.key, required this.meal});
+  const MealDetailsScreen({
+    super.key,
+    required this.meal,
+    required this.onToggleFavorite,
+  });
 
   final Meal meal;
+  final void Function(Meal meal) onToggleFavorite;
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +17,22 @@ class MealDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(meal.title),
+        /* @favorites
+        favorite button koje ce da bude toggle fazon, dakle ili ce da dodaje u fav listu ili ako je item vec u fav listi, onda ce da ga brise. Dakle negde u apliakciji moramo kreirati state ovoga; moramo da upravljamo listom meal itema tj meal ID-evima, ali sad je pravo pitanje gde cemo da menadzujemo ovaj state? 
+        Ovde u meal_details.dart necemo sig jer necemo moci da joj pristupamo iz drugih widgeta, a recimo favorites bi nam bili potrebni u tabs.dart jer tu prikazujemo MealsScreen u kom cemo proslediti listu omiljenih meal-ova
+        Dakle u TabsScreen se koristi, ali manipulisemo listom (add/remove) odavde iz MealDetailsScreen, zato cemo morati da kreiramo fn koja dodaje i uklanja favorites u TabsScreen state, ali cemo morati proslediti ovu f-ju dalje (down) u MealsDetailsScreen pa tako da kad tapnemo na Favorite button, zapravo promenimo state u TabsScreen-u.
+        Dakle idemo u tabs.dart u _TabsScreenState da kreiramo List-u mealova  */
+        //
+        actions: [
+          IconButton(
+            onPressed: () {
+              onToggleFavorite(meal);
+            },
+            icon: const Icon(
+              Icons.star,
+            ),
+          )
+        ],
       ),
 
       /* ? SingleChildScrollView or ListView
