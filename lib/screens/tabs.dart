@@ -19,13 +19,34 @@ class _TabsScreenState extends State<TabsScreen> {
   // pogledaj @favorites text u meal_details.dart
   final List<Meal> _favoriteMeals = [];
 
+// fav item feedback, pravimo toast notif tj snackbar
+  void _showInfoMessage(String message) {
+    // prvo cistimo sve snackbar ukoliko je neki ostao
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
+
   void _toggleMealFavoriteStatus(Meal meal) {
     final isExisting = _favoriteMeals.contains(meal);
 
+    /* ! medjutim, kada add ili remove fav item iz favorites, lista se ne apdejtuje, osim ako ne navigujemo na Categories pa ponovo u Favorites. To je jer ne koristimo setState() ovde da svaki x apdejtujemo state u zavisnosti da li smo dodali ili uklonili item iz favorites.
+    Samo nzm, on je negde stavio _showInfoMessage u setState a u else je stavio van setState, wtf */
     if (isExisting) {
-      _favoriteMeals.remove(meal);
+      // _favoriteMeals.remove(meal);
+      setState(() {
+        _favoriteMeals.remove(meal);
+      });
+      _showInfoMessage('Meal is no longer a favorite.');
     } else {
-      _favoriteMeals.add(meal);
+      // _favoriteMeals.add(meal);
+      setState(() {
+        _favoriteMeals.add(meal);
+        _showInfoMessage('Marked as a favorite.');
+      });
     }
   }
 
@@ -43,7 +64,7 @@ class _TabsScreenState extends State<TabsScreen> {
 
     if (_selectedPageIndex == 1) {
       activePage = MealsScreen(
-        meals: [],
+        meals: _favoriteMeals,
         onToggleFavorite: _toggleMealFavoriteStatus,
       );
       activePageTitle = 'Your Favorites';
