@@ -57,6 +57,15 @@ class _TabsScreenState extends State<TabsScreen> {
     });
   }
 
+  void _setScreen(String identifier) {
+    if (identifier == 'filters') {
+    } else {
+      /* za else je 'meals' a tada loadujemo TabsScreen. Al ono sto je bitno ovde za else, jeste da imamo na umu da mi vec jesmo na TabsScreen-u.
+      Ako otvorimo drawer iz TabsScreen-a i selektujemo Meals u tom Draweru, mi zapravo samo zelimo da zatvorimo Drawer, dakle ne loadujemo nikakav novi skrin, jer smo vec tu gde treba da budemo */
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget activePage =
@@ -80,7 +89,7 @@ class _TabsScreenState extends State<TabsScreen> {
       ),
       /* ? Drawer
       side drawer dodajemo u Scaffold jer ce se i on kreirati za svaki skrin posebno. Flutter ima svoju optimizovanu Drawer klasu, ali mi zelimo da kreiramo nas custom drawer widget jer zelimo da dodamo dosta contenta u drawer! */
-      drawer: const MainDrawer(),
+      drawer: MainDrawer(onSelectScreen: _setScreen),
       body: activePage,
       //? bottomNavigationBar
       bottomNavigationBar: BottomNavigationBar(

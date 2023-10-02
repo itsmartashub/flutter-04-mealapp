@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class MainDrawer extends StatelessWidget {
-  const MainDrawer({super.key});
+  const MainDrawer({super.key, required this.onSelectScreen});
+
+  // uvodimo onSelectScreen identifier (koji dohvatamo u tabs.dart) da bismo znali koje iteme da prikazemo kada se klikne na neki drawer link. Idemo u tabs.dart da dodamo novu fn _setScreen()
+  final void Function(String identifier) onSelectScreen;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +61,9 @@ class MainDrawer extends StatelessWidget {
                     fontSize: 24,
                   ),
             ),
-            onTap: () {},
+            onTap: () {
+              onSelectScreen('meals');
+            },
           ),
           ListTile(
             leading: Icon(
@@ -73,7 +78,9 @@ class MainDrawer extends StatelessWidget {
                     fontSize: 24,
                   ),
             ),
-            onTap: () {},
+            onTap: () {
+              onSelectScreen('filters');
+            },
           ),
         ],
       ),
