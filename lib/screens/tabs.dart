@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meal_app/models/meal.dart';
 
 import 'package:meal_app/screens/categories.dart';
+import 'package:meal_app/screens/filters.dart';
 import 'package:meal_app/screens/meals.dart';
 import 'package:meal_app/widgets/main_drawer.dart';
 
@@ -58,12 +59,25 @@ class _TabsScreenState extends State<TabsScreen> {
   }
 
   void _setScreen(String identifier) {
+    Navigator.of(context).pop();
+
     if (identifier == 'filters') {
-    } else {
-      /* za else je 'meals' a tada loadujemo TabsScreen. Al ono sto je bitno ovde za else, jeste da imamo na umu da mi vec jesmo na TabsScreen-u.
-      Ako otvorimo drawer iz TabsScreen-a i selektujemo Meals u tom Draweru, mi zapravo samo zelimo da zatvorimo Drawer, dakle ne loadujemo nikakav novi skrin, jer smo vec tu gde treba da budemo */
-      Navigator.of(context).pop();
+      // Navigator.of(context).pop();
+
+      /* ? pushReplacement 
+      * Mozda recimo ne zelimo da kada idemo back da se vratimo jedan unazad korak tj da koristimo Stack of Screens, tj gomilanje/slojeviti screenova, vcec zelimo da trenutno aktivni screen (u ovom slucaju TabsScreen) ZAMENIMO sa sledecim skrinom (u ovom slucaju sa FiltersScreen), i da nas back button onda nece raditi kao inace i nece nas vratiti unazad, jer nema cemu da se vrati. I ugl tada izlazimo iz app. To radimo sa pushReplacement */
+      // Navigator.of(context).pushReplacement(MaterialPageRoute(
+      //   builder: (ctx) => const FiltersScreen(),
+      // ));
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (ctx) => const FiltersScreen(),
+      ));
     }
+    //  else {
+    //   /* za else je 'meals' a tada loadujemo TabsScreen. Al ono sto je bitno ovde za else, jeste da imamo na umu da mi vec jesmo na TabsScreen-u.
+    //   Ako otvorimo drawer iz TabsScreen-a i selektujemo Meals u tom Draweru, mi zapravo samo zelimo da zatvorimo Drawer, dakle ne loadujemo nikakav novi skrin, jer smo vec tu gde treba da budemo */
+    //   Navigator.of(context).pop();
+    // }
   }
 
   @override

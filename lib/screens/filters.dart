@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// import 'package:meal_app/screens/tabs.dart';
+// import 'package:meal_app/widgets/main_drawer.dart';
+
 class FiltersScreen extends StatefulWidget {
   const FiltersScreen({super.key});
 
@@ -19,6 +22,16 @@ class _FiltersScreenState extends State<FiltersScreen> {
         title: const Text('Your Filters'),
         // pravimo Column jer zelimo da prikazemo multiple filter sviceve za filter on-off
       ),
+      /*  // s ovim ce back button na ovom FiltersScreen-u da nestane, i bice zamenjen sa drawer button gde kad kliknemo pojavi se side drawer
+      drawer: MainDrawer(onSelectScreen: (identifier) {
+        Navigator.of(context).pop();
+
+        if (identifier == 'meals') {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (ctx) => const TabsScreen(),
+          ));
+        }
+      }), */
       body: Column(
         children: [
           /*
