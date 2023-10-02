@@ -3,6 +3,7 @@ import 'package:meal_app/models/meal.dart';
 
 import 'package:meal_app/screens/categories.dart';
 import 'package:meal_app/screens/meals.dart';
+import 'package:meal_app/widgets/main_drawer.dart';
 
 // sad pvde koristimo StatefulWidget jer cemo ovde menjati neki state u zavisnosti koji je tab kliknut cemo prikazivati neki view
 class TabsScreen extends StatefulWidget {
@@ -77,6 +78,9 @@ class _TabsScreenState extends State<TabsScreen> {
       appBar: AppBar(
         title: Text(activePageTitle),
       ),
+      /* ? Drawer
+      side drawer dodajemo u Scaffold jer ce se i on kreirati za svaki skrin posebno. Flutter ima svoju optimizovanu Drawer klasu, ali mi zelimo da kreiramo nas custom drawer widget jer zelimo da dodamo dosta contenta u drawer! */
+      drawer: const MainDrawer(),
       body: activePage,
       //? bottomNavigationBar
       bottomNavigationBar: BottomNavigationBar(
