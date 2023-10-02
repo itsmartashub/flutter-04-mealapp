@@ -57,10 +57,13 @@ class _FiltersScreenState extends State<FiltersScreen> {
             Filter.vegan: _veganFilterSet,
           });
 
+          // __Future
           /*  moramo vratiti true ili  false u zavisnosti da li zelimo da nnavigujemo back ili ne. Ali posto rucno navigujemo nazad ovde gore sa Navigator.of(context).pop({...}), moramo da vratimo false, da ne bismo poppovali 2x, jer bismo verov ugasili app.
           DA nismo iznad pop-ovali, vec radili nesto drugo, tipa suvali podatke u neku db, onda bismo ovde morali vratiti true ako zelimo da omogucimo korisniku da napusti Screen.
           
-          ! Inace, posto onWillPop zeli da vratimo FUTURE, pa zato dodajemo ispred ove anonim fn rec async, jer pomocu toga ne samo da mozemo da kor await keyword, vec i da wrapujemo vrednost koju vracamo (return false) u future */
+          ! Inace, posto onWillPop zeli da vratimo FUTURE, pa zato dodajemo ispred ove anonim fn rec async, jer pomocu toga ne samo da mozemo da kor await keyword, vec i da wrapujemo vrednost koju vracamo (return false) u future
+          
+          kada idemo u tabs.dart u fn _setScreen i hoverujemo misem na ono "push" u Navigatoru, VSC nam kaze da se vraca Future */
           return false;
         },
         child: Column(

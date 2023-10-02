@@ -58,7 +58,7 @@ class _TabsScreenState extends State<TabsScreen> {
     });
   }
 
-  void _setScreen(String identifier) {
+  void _setScreen(String identifier) async {
     Navigator.of(context).pop();
 
     if (identifier == 'filters') {
@@ -69,9 +69,17 @@ class _TabsScreenState extends State<TabsScreen> {
       // Navigator.of(context).pushReplacement(MaterialPageRoute(
       //   builder: (ctx) => const FiltersScreen(),
       // ));
-      Navigator.of(context).push(MaterialPageRoute(
+
+      /* ? get Future
+      Zasto ovo ovde push sada vraca Future (vidi __Future u filters.dart). Zasto smo napravili da dobijamo Future a ne direkt Map, jer kada pushujemo ovaj screen u stack of screens ne dobijamo odmah te podatke, zapravov korisnik moze da interaguje sa tim skrinom i on moce mzd ici nazad (stisnuti back) nakon 10s, 10min, ili 10 hours, mi to ne znamo. I zato se zove Future, ne vracamo dostupne vrednosti odmah vec negde u nekom buducem trenutku kada korisnik odluci da naviguje nazad.
+      Da bismo koristili ovde Future, u ovoj _setScreen fn dodajemo async da bismo ovde mogli da kor await i sacuvamo u result varijabli> ali to ce da se desi kada korisnik ode unazad, moramo dakle da cekamo na to tj await-ujemo da se to desi. 
+      Takodje, ispred .push cemo dodati angular brackets <> i tu definisati koje podatke ocekujemo da se vrate by push. Kao i za sve genericke tipove kor <>. Map je sam po sebi genericki tip pa i njemu stavljamo <> gde stavljamo Filter enum da bude key, a value da bude bool jer imamo booleans */
+      final result =
+          await Navigator.of(context).push<Map<Filter, bool>>(MaterialPageRoute(
         builder: (ctx) => const FiltersScreen(),
       ));
+
+      // print(result); // output: {Filter.glutenFree: true, Filter.lactoseFree: false, Filter.vegetarian: true, Filter.vegan: false}
     }
     //  else {
     //   /* za else je 'meals' a tada loadujemo TabsScreen. Al ono sto je bitno ovde za else, jeste da imamo na umu da mi vec jesmo na TabsScreen-u.
