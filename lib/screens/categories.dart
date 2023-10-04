@@ -8,15 +8,21 @@ import 'package:meal_app/screens/meals.dart';
 
 class CategoriesScreen extends StatelessWidget {
   // moramo u tabs.dart gde kor ovu klasu i dodajemo ovaj property onToggleFavorite
-  const CategoriesScreen({super.key, required this.onToggleFavorite});
+  const CategoriesScreen({
+    super.key,
+    required this.onToggleFavorite,
+    required this.availableMeals,
+  });
 
   final void Function(Meal meal) onToggleFavorite;
+  final List<Meal> availableMeals;
 
   /* Ovo je prvi x da koristimo method u StatelessWidgetu. Ugl to bude u StatefullWidgetu jer kad koristimo method ugl apdejtujemo neki state. Medjutim ovde necemo apdejtovati state vec cemo loadovati drugi screen.
   I za to cemo koristiti feature koji je build-inovan u Flutter: Navigator.
   Posto smo u StatelessWidgetu, context NIJE GLOBALNO dostupan, zato moramo da u _selectCategory prihvatimo argument BuildContext context */
   void _selectCategory(BuildContext context, Category category) {
-    final filteredMeals = dummyMeals
+    // final filteredMeals = dummyMeals
+    final filteredMeals = availableMeals
         .where((meal) => meal.categories.contains(category.id))
         .toList();
 

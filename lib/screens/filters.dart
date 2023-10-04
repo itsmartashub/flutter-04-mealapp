@@ -11,10 +11,13 @@ enum Filter {
 }
 
 class FiltersScreen extends StatefulWidget {
-  const FiltersScreen({super.key});
+  const FiltersScreen({super.key, required this.currentFilters});
+
+  // da se ne bi resetovali filteri kada idemo na FiltrersScreen
+  final Map<Filter, bool> currentFilters;
 
   @override
-  State<StatefulWidget> createState() {
+  State<FiltersScreen> createState() {
     return _FiltersScreenState();
   }
 }
@@ -24,6 +27,19 @@ class _FiltersScreenState extends State<FiltersScreen> {
   var _lactoseFreeFilterSet = false;
   var _vegetarianFilterSet = false;
   var _veganFilterSet = false;
+
+  /* ! da se ne bi resetovali filteri kada idemo na FiltersScreen, i dodajemo im inicijalnu vrednost widget.currentFilters[...]!;
+  widget je specijalan property da mozemo da pristupimo propertijima i metodama ove widget klase. Samo widget property nije dostupan ovde gore gde inicijalizujemo promenljive ove klase, recimo:
+      var _glutenFreeFilterSet = widget.currentFilters[Filter.glutenFree]!; ❌ 
+  vec je samo dostupno unutar metoda ove klase. Zato cemo ovde gore ostaviti da inicijalno sve vrednost budu false, ali cemo u initState() gde cemo nakon zvanja super.initState() da overwrittujemo ove vrednosti, sa vrednostima koje smo dobili preko widget-a, tj sa currentFilters */
+  @override
+  void initState() {
+    super.initState();
+    _glutenFreeFilterSet = widget.currentFilters[Filter.glutenFree]!;
+    _lactoseFreeFilterSet = widget.currentFilters[Filter.lactoseFree]!;
+    _vegetarianFilterSet = widget.currentFilters[Filter.vegetarian]!;
+    _veganFilterSet = widget.currentFilters[Filter.vegan]!;
+  }
 
   @override
   Widget build(BuildContext context) {

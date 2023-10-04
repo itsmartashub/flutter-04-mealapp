@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:meal_app/models/meal.dart';
 
+import 'package:meal_app/data/dummy_data.dart';
+import 'package:meal_app/models/meal.dart';
 import 'package:meal_app/screens/categories.dart';
 import 'package:meal_app/screens/filters.dart';
 import 'package:meal_app/screens/meals.dart';
 import 'package:meal_app/widgets/main_drawer.dart';
+
+const kInitalFilters = {
+  Filter.glutenFree: false,
+  Filter.lactoseFree: false,
+  Filter.vegetarian: false,
+  Filter.vegan: false,
+};
 
 // sad pvde koristimo StatefulWidget jer cemo ovde menjati neki state u zavisnosti koji je tab kliknut cemo prikazivati neki view
 class TabsScreen extends StatefulWidget {
@@ -20,6 +28,9 @@ class _TabsScreenState extends State<TabsScreen> {
   int _selectedPageIndex = 0;
   // pogledaj @favorites text u meal_details.dart
   final List<Meal> _favoriteMeals = [];
+
+// ovo je inicijalna vrednost koja bi treba da bude apdejtovana sa podacima iz FiltersScreen-a
+  Map<Filter, bool> _selectedFilters = kInitalFilters;
 
 // fav item feedback, pravimo toast notif tj snackbar
   void _showInfoMessage(String message) {
@@ -74,12 +85,26 @@ class _TabsScreenState extends State<TabsScreen> {
       Zasto ovo ovde push sada vraca Future (vidi __Future u filters.dart). Zasto smo napravili da dobijamo Future a ne direkt Map, jer kada pushujemo ovaj screen u stack of screens ne dobijamo odmah te podatke, zapravov korisnik moze da interaguje sa tim skrinom i on moce mzd ici nazad (stisnuti back) nakon 10s, 10min, ili 10 hours, mi to ne znamo. I zato se zove Future, ne vracamo dostupne vrednosti odmah vec negde u nekom buducem trenutku kada korisnik odluci da naviguje nazad.
       Da bismo koristili ovde Future, u ovoj _setScreen fn dodajemo async da bismo ovde mogli da kor await i sacuvamo u result varijabli> ali to ce da se desi kada korisnik ode unazad, moramo dakle da cekamo na to tj await-ujemo da se to desi. 
       Takodje, ispred .push cemo dodati angular brackets <> i tu definisati koje podatke ocekujemo da se vrate by push. Kao i za sve genericke tipove kor <>. Map je sam po sebi genericki tip pa i njemu stavljamo <> gde stavljamo Filter enum da bude key, a value da bude bool jer imamo booleans */
-      final result =
-          await Navigator.of(context).push<Map<Filter, bool>>(MaterialPageRoute(
-        builder: (ctx) => const FiltersScreen(),
-      ));
-
+      final result = await Navigator.of(context).push<Map<Filter, bool>>(
+        MaterialPageRoute(
+          // inace da se ne bi resetovali filteri kada idemo nazad na FiltrersScreen, moramo proslediti currentFilters u FiltersScreen
+          builder: (ctx) => FiltersScreen(currentFilters: _selectedFilters),
+        ),
+      );
       // print(result); // output: {Filter.glutenFree: true, Filter.lactoseFree: false, Filter.vegetarian: true, Filter.vegan: false}
+
+      /* Ovakvo cuvanje vrednosti nije dovoljno, jer ako takodje zelimo da se postaramo da je build metod izvrsen opet tako da bi apdejtovani filteri il iapdejtovana lista dostupnih meals, bili prosledjeni u CategoriesScreen. Btw, ne u MealsScreen jer ne zelimo da filtriramo meals koji su vidljivi na tom skrinu.
+      Favorites ce uvek biti vidljivi bez obz koji filter je selektovan.
+      
+      ``` ?? cekira da li je vrednost ispred njega (??) null, i ako jeste, koristice se fallback vrednost navedena posle ??
+      Dakle ako results bude null, koristicemo kInitalFilters za value selektovanog filtera.
+      
+      Ovde setujemo _selectedFilter kada god dodjemo sa FiltersScreen-a, isada ove _selectedFilter mozemo da koristimo da bismo apdejtovali meals koje cemo prikazati onda kada izaberemo kategoriju na CategoriesScreen. Pa sada kada prosledjujemo filter podatke u CategoriesScreen imamo dve glavne opcije:
+      1. Mozemo ili da prosledimo listu dostupnih jela koji potom mogu biti izabrani i korisceni unutar CategoriesScreen-a, ili 
+      2. Da prosledimo filters i dodamo logiku za filtriranje jela u ovaj CategoriesScreen */
+      setState(() {
+        _selectedFilters = result ?? kInitalFilters;
+      });
     }
     //  else {
     //   /* za else je 'meals' a tada loadujemo TabsScreen. Al ono sto je bitno ovde za else, jeste da imamo na umu da mi vec jesmo na TabsScreen-u.
@@ -90,8 +115,29 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget activePage =
-        CategoriesScreen(onToggleFavorite: _toggleMealFavoriteStatus);
+    // ovim uzvicnikom isped _selectedFilter[Filter.glutenFree]! govorimo da _selectedItems nikad nece biti null, a nece jer samo jer smo gore uvek setovali da bar inicijalno bude onaj pocetni Map, tj kInitialFilters
+    final availableMeals = dummyMeals.where((meal) {
+      if (_selectedFilters[Filter.glutenFree]! && !meal.isGlutenFree) {
+        return false;
+      }
+      if (_selectedFilters[Filter.lactoseFree]! && !meal.isLactoseFree) {
+        return false;
+      }
+      if (_selectedFilters[Filter.vegetarian]! && !meal.isVegetarian) {
+        return false;
+      }
+      if (_selectedFilters[Filter.vegan]! && !meal.isVegan) {
+        return false;
+      }
+
+      // bez ovoga ovde samo imamo gomilu cekera koji potencijalno vracaju false, ali nikad ne vracamo true za jela koja ustvari zelimo da zadrzimo
+      return true;
+    }).toList();
+
+    Widget activePage = CategoriesScreen(
+      onToggleFavorite: _toggleMealFavoriteStatus,
+      availableMeals: availableMeals,
+    );
     var activePageTitle = 'Categories';
 
     if (_selectedPageIndex == 1) {
