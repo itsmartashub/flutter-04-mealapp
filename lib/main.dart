@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 // import 'package:meal_app/screens/categories.dart';
 import 'package:meal_app/screens/tabs.dart';
 // import 'package:meal_app/data/dummy_data.dart';
@@ -14,8 +16,18 @@ final theme = ThemeData(
   textTheme: GoogleFonts.latoTextTheme(),
 );
 
-void main() {
+/* void main() {
   runApp(const App());
+} */
+
+/* ? ProviderScope
+! kada koristimo Flutter Riverpod, moramo da idemo u main.dart i u void main() { runApp(const App()) } wrapujemo ovo const App() u ProviderScope() widget i time unlockujemo ovaj behind the scenes state management f-naliti, a wrapujemo citav App() da bi svi wigeti u citavoj app mogli koristiti ove Riverpod feature. Dakle ako znamo da bi samo odredjen deo app koristio te feature, onda mozemo samo taj deo da wrapujemo u PRoviderScope */
+void main() {
+  runApp(
+    const ProviderScope(
+      child: App(),
+    ),
+  );
 }
 
 class App extends StatelessWidget {

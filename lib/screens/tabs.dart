@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:meal_app/data/dummy_data.dart';
+// import 'package:meal_app/data/dummy_data.dart';
 import 'package:meal_app/models/meal.dart';
 import 'package:meal_app/screens/categories.dart';
 import 'package:meal_app/screens/filters.dart';
 import 'package:meal_app/screens/meals.dart';
 import 'package:meal_app/widgets/main_drawer.dart';
+import 'package:meal_app/providers/meals_provider.dart';
 
 const kInitalFilters = {
   Filter.glutenFree: false,
@@ -15,16 +17,30 @@ const kInitalFilters = {
 };
 
 // sad pvde koristimo StatefulWidget jer cemo ovde menjati neki state u zavisnosti koji je tab kliknut cemo prikazivati neki view
-class TabsScreen extends StatefulWidget {
+// class TabsScreen extends StatefulWidget {
+/* class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
 
   @override
   State<TabsScreen> createState() {
     return _TabsScreenState();
   }
+} */
+
+/* ? ConsumerStatefulWidget
+- is StatefulWidget provided by Riverpod package koji daje neku f-nost koja nam omogucava da osluskujemo nase provajdere i promene nastale u njihovim . da smo imali StatelessWidget, koristili bismo ConsumerWidget.
+Naravno, i ovde sad umesto State koristimo ConsumerState, i dole isto u _TabsScreenState extends ConsumerState */
+class TabsScreen extends ConsumerStatefulWidget {
+  const TabsScreen({super.key});
+
+  @override
+  ConsumerState<TabsScreen> createState() {
+    return _TabsScreenState();
+  }
 }
 
-class _TabsScreenState extends State<TabsScreen> {
+// class _TabsScreenState extends State<TabsScreen> {
+class _TabsScreenState extends ConsumerState<TabsScreen> {
   int _selectedPageIndex = 0;
   // pogledaj @favorites text u meal_details.dart
   final List<Meal> _favoriteMeals = [];
@@ -115,8 +131,41 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
+/*
+   //@ BEZ FLUTTER PROVIDER 
     // ovim uzvicnikom isped _selectedFilter[Filter.glutenFree]! govorimo da _selectedItems nikad nece biti null, a nece jer samo jer smo gore uvek setovali da bar inicijalno bude onaj pocetni Map, tj kInitialFilters
-    final availableMeals = dummyMeals.where((meal) {
+     final availableMeals = dummyMeals.where((meal) {
+      if (_selectedFilters[Filter.glutenFree]! && !meal.isGlutenFree) {
+        return false;
+      }
+      if (_selectedFilters[Filter.lactoseFree]! && !meal.isLactoseFree) {
+        return false;
+      }
+      if (_selectedFilters[Filter.vegetarian]! && !meal.isVegetarian) {
+        return false;
+      }
+      if (_selectedFilters[Filter.vegan]! && !meal.isVegan) {
+        return false;
+      }
+
+      // bez ovoga ovde samo imamo gomilu cekera koji potencijalno vracaju false, ali nikad ne vracamo true za jela koja ustvari zelimo da zadrzimo
+      return true;
+    }).toList();
+*/
+
+    /* @ SA FLUTTER PROVIDER 
+    Posto extendujemo ConsumerState, dobijamo pristup ref propertiju, koji biva pandan widget propertiju.
+    ! ref properti nam omogucava da set-upujemo listenere nasim provajderima.
+    ! imamo vise ref. metoda, ali najvazniji su ref.read() da dohvatimo podatke iz nasem provajdera, ref.watch() da setapujemo listener koji ce se postarati da se build method izvrsava svaki x kada se neka promena na nasim podacima desi.
+    Preporuka riverpod docsa je da se sto vise koristi watch (i to odmah na pocetku) iako mzd tehnicki samo jednom treba da read-ujemo podatke, jer na ovaj nacin, ako ikada promenimo nasu logiku, izbecicemo neke bagove koje bismo recimo zaboravili da zamenimo read sa watch.
+    watch needs a parametar koji je predstavlja providera.
+    Dakle, ovaj build ce se okinuti kada god se neki pdoatak u mealsProvider promeni. Watch takodje vraca podatke od provajdera kog watchujemo
+    
+    ? ProviderScope
+    ! kada koristimo Flutter Riverpod, moramo da idemo u main.dart i u void main() { runApp(const App()) } wrapujemo ovo const App() u ProviderScope() widget i time unlockujemo ovaj behind the scenes state management f-naliti, a wrapujemo citav App() da bi svi wigeti u citavoj app mogli koristiti ove Riverpod feature. Dakle ako znamo da bi samo odredjen deo app koristio te feature, onda mozemo samo taj deo da wrapujemo u PRoviderScope */
+    final meals = ref.watch(mealsProvider);
+
+    final availableMeals = meals.where((meal) {
       if (_selectedFilters[Filter.glutenFree]! && !meal.isGlutenFree) {
         return false;
       }
