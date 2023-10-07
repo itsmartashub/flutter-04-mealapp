@@ -49,7 +49,8 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
 // ovo je inicijalna vrednost koja bi treba da bude apdejtovana sa podacima iz FiltersScreen-a
   Map<Filter, bool> _selectedFilters = kInitalFilters;
 
-// fav item feedback, pravimo toast notif tj snackbar
+/* @SA favorites_provider mozemo da premesteno u meals_details.dart u IconButton onPressed
+ // fav item feedback, pravimo toast notif tj snackbar
   void _showInfoMessage(String message) {
     // prvo cistimo sve snackbar ukoliko je neki ostao
     ScaffoldMessenger.of(context).clearSnackBars();
@@ -59,6 +60,7 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
       ),
     );
   }
+*/
 
 /* @MOZEMO UKLONITI KAD KORISTIMO RIVERPOD TJ FAVORITE_PROVIDER
 // i to cemo da koristimo u StateNotifierProvider

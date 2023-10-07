@@ -18,7 +18,8 @@ class FavoriteMealsNotifier extends StateNotifier<List<Meal>> {
   ! NIKAD NE SMEEMO DA EDITUJEMO TU VREDNOST
   * Rekli smo vec ranije da kada kreiramo objekte, ti objekti bivaju sacuvani u memoriji uredjaja, i mogu biti zamenjeni novim objektima koji imaju novu adresu u memoriji, i u tom slucaju ako se stara vrednost vise nigde ne koristi, ona ce biti izbrisana. Ali isto tako mozemo editovani vec psotojeci objekat u memoriji tako da adresa ostaje ista, i manipulisemo podatkom koji vec postoji u memoriji umesto da ga zamenimo dodavajuci novi, A TO U StateNotifier NIJE DOZVOLJENO!!!!
   __ NIJE NAM DOZVBOLJENO DA EDITUJEMO VREDNOST KOJA VEC POSTOJI U MEMORIJI VEC UVEK MORAMO DA KREIRAMO NOVU!!! */
-  void toggleMealFavoriteStatus(Meal meal) {
+  // void toggleMealFavoriteStatus(Meal meal) {
+  bool toggleMealFavoriteStatus(Meal meal) {
     // state.add(); // ❌
     // state.remove(); // ❌
     final mealIsFavorite = state.contains(meal); // ✅
@@ -26,9 +27,11 @@ class FavoriteMealsNotifier extends StateNotifier<List<Meal>> {
     if (mealIsFavorite) {
       // ✅ where moze jer ono KREIRA/VRACA NOVU LISTU, ne edituje postojecu!
       state = state.where((m) => m.id != meal.id).toList();
+      return false;
     } else {
       // ✅ kreiranje nove (meal) dodavajuci stare elemente (...state)
       state = [...state, meal];
+      return true;
     }
   }
 }

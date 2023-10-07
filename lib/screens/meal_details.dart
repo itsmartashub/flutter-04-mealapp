@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:meal_app/models/meal.dart';
+import 'package:meal_app/providers/favorites_provider.dart';
 
-class MealDetailsScreen extends StatelessWidget {
+//@ BEZ flutter_riverpod
+// class MealDetailsScreen extends StatelessWidget {
+
+//@ SA flutter_riverpod
+class MealDetailsScreen extends ConsumerWidget {
   const MealDetailsScreen({
     super.key,
     required this.meal,
@@ -13,7 +19,12 @@ class MealDetailsScreen extends StatelessWidget {
   // final void Function(Meal meal) onToggleFavorite; //@ ukalnjamo jer kor. favorites_provider.dart
 
   @override
-  Widget build(BuildContext context) {
+  //@ BEZ flutter_riverpod
+  // Widget build(BuildContext context) {
+
+/* @ SA flutter_riverpod 
+! Dodajemo  drugi parametar WidgetRef ref, dakle type WidgetRef koji nam je potreban za osluskivanje provajdera. Ovo nismo morali da radimo u tabs.dart jer tamo imamo State klasu i zamenjujemo je sa ConsumerState koji cini ovaj ref property dostupnim globalno u toj klasi, a ovde u StatelessWidgetu je drugacije. Ovde nemamo ovaj geenralni ref property, vec ga moramo dodati ovde kao parametar build metodu */
+  Widget build(BuildContext context, WidgetRef ref) {
     // Scaffold jer je brand new screen
     return Scaffold(
       appBar: AppBar(
@@ -27,7 +38,21 @@ class MealDetailsScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              onToggleFavorite(meal);
+              // onToggleFavorite(meal); //@ ukalnjamo jer kor. favorites_provider.dart
+              // ovo .notifier nam daje pristup FavoriteMealsNotifier-u koji imaovaj metod koji zelimo da pozovemo (toggleMealFavoriteStatus)
+              final wasAdded = ref
+                  .read(favoriteMealsProvider.notifier)
+                  .toggleMealFavoriteStatus(meal);
+
+              // prvo cistimo sve snackbar ukoliko je neki ostao
+              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(wasAdded
+                      ? 'Meal added as a favorites.'
+                      : 'Meal removed.'),
+                ),
+              );
             },
             icon: const Icon(
               Icons.star,
