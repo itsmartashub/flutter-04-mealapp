@@ -10,11 +10,11 @@ class CategoriesScreen extends StatelessWidget {
   // moramo u tabs.dart gde kor ovu klasu i dodajemo ovaj property onToggleFavorite
   const CategoriesScreen({
     super.key,
-    required this.onToggleFavorite,
+    // required this.onToggleFavorite, //@ ukalnjamo jer kor. favorites_provider.dart
     required this.availableMeals,
   });
 
-  final void Function(Meal meal) onToggleFavorite;
+  // final void Function(Meal meal) onToggleFavorite; //@ ukalnjamo jer kor. favorites_provider.dart
   final List<Meal> availableMeals;
 
   /* Ovo je prvi x da koristimo method u StatelessWidgetu. Ugl to bude u StatefullWidgetu jer kad koristimo method ugl apdejtujemo neki state. Medjutim ovde necemo apdejtovati state vec cemo loadovati drugi screen.
@@ -32,7 +32,7 @@ class CategoriesScreen extends StatelessWidget {
         builder: (ctx) => MealsScreen(
           title: category.title,
           meals: filteredMeals,
-          onToggleFavorite: onToggleFavorite,
+          // onToggleFavorite: onToggleFavorite, //@ ukalnjamo jer kor. favorites_provider.dart
         ),
       ),
     ); // nacin II

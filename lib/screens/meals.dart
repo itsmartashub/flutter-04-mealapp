@@ -11,7 +11,7 @@ class MealsScreen extends StatelessWidget {
     this.title,
     required this.meals,
     // required this.onToggleFavorite -> ovo nam treba samo da bismo mogli da ga forwardujemo u MealsDetailScreen. Moramo i u tabs.dart gde kor ovaj widget MealsScreen da prosledimo onToggleFavorite, ali i u categories.dart
-    required this.onToggleFavorite,
+    // required this.onToggleFavorite, //@ ukalnjamo jer kor. favorites_provider.dart
   });
 
   // ovde cemo imati i input jer ce mi trebati lista svih meals koji bi trebalo da se prikazu za zadatu kategoriju. Za to nam treba jos duymmy meal data, a za to cemo kreirati novi models meal.dart
@@ -24,14 +24,14 @@ class MealsScreen extends StatelessWidget {
   final String? title;
   final List<Meal> meals;
 
-  final void Function(Meal meal) onToggleFavorite;
+  // final void Function(Meal meal) onToggleFavorite; //@ ukalnjamo jer kor. favorites_provider.dart
 
 // vrlo bitno sto prihvata ne samo meal vec i context!!
   void selectMeal(BuildContext context, Meal meal) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (ctx) => MealDetailsScreen(
         meal: meal,
-        onToggleFavorite: onToggleFavorite,
+        // onToggleFavorite: onToggleFavorite, //@ ukalnjamo jer kor. favorites_provider.dart
       ),
     ));
   }

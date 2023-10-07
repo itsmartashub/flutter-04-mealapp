@@ -8,6 +8,7 @@ import 'package:meal_app/screens/filters.dart';
 import 'package:meal_app/screens/meals.dart';
 import 'package:meal_app/widgets/main_drawer.dart';
 import 'package:meal_app/providers/meals_provider.dart';
+import 'package:meal_app/providers/favorites_provider.dart';
 
 const kInitalFilters = {
   Filter.glutenFree: false,
@@ -43,7 +44,7 @@ class TabsScreen extends ConsumerStatefulWidget {
 class _TabsScreenState extends ConsumerState<TabsScreen> {
   int _selectedPageIndex = 0;
   // pogledaj @favorites text u meal_details.dart
-  final List<Meal> _favoriteMeals = [];
+  // final List<Meal> _favoriteMeals = [];
 
 // ovo je inicijalna vrednost koja bi treba da bude apdejtovana sa podacima iz FiltersScreen-a
   Map<Filter, bool> _selectedFilters = kInitalFilters;
@@ -59,7 +60,9 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
     );
   }
 
-  void _toggleMealFavoriteStatus(Meal meal) {
+/* @MOZEMO UKLONITI KAD KORISTIMO RIVERPOD TJ FAVORITE_PROVIDER
+// i to cemo da koristimo u StateNotifierProvider
+void _toggleMealFavoriteStatus(Meal meal) {
     final isExisting = _favoriteMeals.contains(meal);
 
     /* ! medjutim, kada add ili remove fav item iz favorites, lista se ne apdejtuje, osim ako ne navigujemo na Categories pa ponovo u Favorites. To je jer ne koristimo setState() ovde da svaki x apdejtujemo state u zavisnosti da li smo dodali ili uklonili item iz favorites.
@@ -78,6 +81,7 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
       });
     }
   }
+*/
 
   void _selectPage(int index) {
     setState(() {
@@ -184,15 +188,19 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
     }).toList();
 
     Widget activePage = CategoriesScreen(
-      onToggleFavorite: _toggleMealFavoriteStatus,
+      // onToggleFavorite: _toggleMealFavoriteStatus, //@ ukalnjamo jer kor. favorites_provider.dart
       availableMeals: availableMeals,
     );
     var activePageTitle = 'Categories';
 
+    /* ovde zelimo da reachujemo FavoriteMeals provider da dohvatimo ovaj _favoriteMeals da bismo ih prosledili u MealsScreen.
+    Ovo smo takodje mogli uraditi unutar MealsScreen umesto ovde, jer na kraju krajeva tamo zelimo ove favoriteMeals, medjutim, imaj na umu da se MealsScreen ne koristi samo u FavoritesScreen vec i unutar CategoriesScreen onda kada selektujemo kategoriju, i tada ne zelimo da pokazemo samo favorites, vec sve meals u toj kategoriji. Zato ima logike da MealsScreen ostavimo configurable i prihvatimo meals koja bi trebalo ovde biti kao parametar kako bi MealsScreen moglo biti ponovo koriscen unutar razlicitih Screenova. I mi zato dobijamo favoriteMeals na mestu gde mi zapravo i trebamo favoriteMeals, a to bi bilo ovde kada je ovaj tab selektovan u nasem TabsScreen-u */
     if (_selectedPageIndex == 1) {
+      final favoriteMeals = ref.watch(favoriteMealsProvider);
       activePage = MealsScreen(
-        meals: _favoriteMeals,
-        onToggleFavorite: _toggleMealFavoriteStatus,
+        // meals: _favoriteMeals, //@ ukalnjamo jer kor. favorites_provider.dart
+        meals: favoriteMeals,
+        // onToggleFavorite: _toggleMealFavoriteStatus, //@ ukalnjamo jer kor. favorites_provider.dart
       );
       activePageTitle = 'Your Favorites';
     }

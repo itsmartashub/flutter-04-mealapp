@@ -6,11 +6,11 @@ class MealDetailsScreen extends StatelessWidget {
   const MealDetailsScreen({
     super.key,
     required this.meal,
-    required this.onToggleFavorite,
+    // required this.onToggleFavorite, //@ ukalnjamo jer kor. favorites_provider.dart
   });
 
   final Meal meal;
-  final void Function(Meal meal) onToggleFavorite;
+  // final void Function(Meal meal) onToggleFavorite; //@ ukalnjamo jer kor. favorites_provider.dart
 
   @override
   Widget build(BuildContext context) {
