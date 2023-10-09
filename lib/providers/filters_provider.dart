@@ -22,6 +22,10 @@ class FiltersNotifier extends StateNotifier<Map<Filter, bool>> {
     // state[filter] = isActive; // ❌ nije dozvoljeno mutirati state !!!
     state = {...state, filter: isActive}; // ✅
   }
+
+  void setFilters(Map<Filter, bool> chosenFilters) {
+    state = chosenFilters;
+  }
 }
 
 final filtersProvider =

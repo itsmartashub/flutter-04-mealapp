@@ -16,10 +16,13 @@ enum Filter {
 
 // class FiltersScreen extends StatefulWidget {
 class FiltersScreen extends ConsumerStatefulWidget {
-  const FiltersScreen({super.key, required this.currentFilters});
+  const FiltersScreen({
+    super.key,
+    // required this.currentFilters, //@ uklanjamo jer dodajemo filters_provider.dart
+  });
 
   // da se ne bi resetovali filteri kada idemo na FiltrersScreen
-  final Map<Filter, bool> currentFilters;
+  // final Map<Filter, bool> currentFilters; //@ uklanjamo jer dodajemo filters_provider.dart
 
   @override
   ConsumerState<FiltersScreen> createState() {
@@ -28,6 +31,7 @@ class FiltersScreen extends ConsumerStatefulWidget {
 }
 
 class _FiltersScreenState extends ConsumerState<FiltersScreen> {
+  /* Iako smo dodali filters_provider.dart u ovaj fajl i iako kor FiltersNotifier i tamo inicijalizujemo ustvari ove vrednosti, ostavljamo i ove ovde jer su nam ove vrednosti potrebne za to da kada korisnik tapne na ove razl ListTiles, dkale na ove razl sviceve u list tiles, zelimo da reflektujemo ove promene na screen-u (value: _glutenFreeFilterSet npr). Zato i dalje menadzujemo ovim promenljivima lokalno u ovom widgetu takodje tako da se ovi apdejti za UI kada korisnici izaberu neki switch se i dalje priakzu */
   var _glutenFreeFilterSet = false;
   var _lactoseFreeFilterSet = false;
   var _vegetarianFilterSet = false;
@@ -40,10 +44,19 @@ class _FiltersScreenState extends ConsumerState<FiltersScreen> {
   @override
   void initState() {
     super.initState();
+
+    /* //@ uklanjamo jer dodajemo filters_provider.dart 
     _glutenFreeFilterSet = widget.currentFilters[Filter.glutenFree]!;
     _lactoseFreeFilterSet = widget.currentFilters[Filter.lactoseFree]!;
     _vegetarianFilterSet = widget.currentFilters[Filter.vegetarian]!;
-    _veganFilterSet = widget.currentFilters[Filter.vegan]!;
+    _veganFilterSet = widget.currentFilters[Filter.vegan]!; */
+
+    /* Kor .read() umesto .watch() jer se initState svakako izvrsava samo jednom tako da ne bi imalo smisla da ovde stavimo listener jer se ovaj kod svakako nece ponovo isvrsiti, osim ako je widget dodat ili ponovo dodat */
+    final activeFilters = ref.read(filtersProvider);
+    _glutenFreeFilterSet = activeFilters[Filter.glutenFree]!;
+    _lactoseFreeFilterSet = activeFilters[Filter.lactoseFree]!;
+    _vegetarianFilterSet = activeFilters[Filter.vegetarian]!;
+    _veganFilterSet = activeFilters[Filter.vegan]!;
   }
 
   @override
@@ -71,13 +84,23 @@ class _FiltersScreenState extends ConsumerState<FiltersScreen> {
       Da bismo standardizovali te keys, dodacemo gore on the top enum Filter */
       body: WillPopScope(
         onWillPop: () async {
-          Navigator.of(context).pop({
+          ref.read(filtersProvider.notifier).setFilters({
             Filter.glutenFree: _glutenFreeFilterSet,
             Filter.lactoseFree: _lactoseFreeFilterSet,
             Filter.vegetarian: _vegetarianFilterSet,
             Filter.vegan: _veganFilterSet,
           });
 
+          return true;
+
+          /* @ uklanjamo jer dodajemo filters_provider.dart 
+          Navigator.of(context).pop({
+            Filter.glutenFree: _glutenFreeFilterSet,
+            Filter.lactoseFree: _lactoseFreeFilterSet,
+            Filter.vegetarian: _vegetarianFilterSet,
+            Filter.vegan: _veganFilterSet,
+          });
+          
           // __Future
           /*  moramo vratiti true ili  false u zavisnosti da li zelimo da nnavigujemo back ili ne. Ali posto rucno navigujemo nazad ovde gore sa Navigator.of(context).pop({...}), moramo da vratimo false, da ne bismo poppovali 2x, jer bismo verov ugasili app.
           DA nismo iznad pop-ovali, vec radili nesto drugo, tipa suvali podatke u neku db, onda bismo ovde morali vratiti true ako zelimo da omogucimo korisniku da napusti Screen.
@@ -86,6 +109,7 @@ class _FiltersScreenState extends ConsumerState<FiltersScreen> {
           
           kada idemo u tabs.dart u fn _setScreen i hoverujemo misem na ono "push" u Navigatoru, VSC nam kaze da se vraca Future */
           return false;
+          */
         },
         child: Column(
           children: [

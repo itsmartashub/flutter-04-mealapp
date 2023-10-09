@@ -48,7 +48,7 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
   // final List<Meal> _favoriteMeals = [];
 
 // ovo je inicijalna vrednost koja bi treba da bude apdejtovana sa podacima iz FiltersScreen-a
-  Map<Filter, bool> _selectedFilters = kInitalFilters;
+  // Map<Filter, bool> _selectedFilters = kInitalFilters; //@ brisemo currentFilters: _selectedFilters jer dodajemo filters_provider.dart
 
 /* @SA favorites_provider mozemo da premesteno u meals_details.dart u IconButton onPressed
  // fav item feedback, pravimo toast notif tj snackbar
@@ -108,10 +108,14 @@ void _toggleMealFavoriteStatus(Meal meal) {
       Zasto ovo ovde push sada vraca Future (vidi __Future u filters.dart). Zasto smo napravili da dobijamo Future a ne direkt Map, jer kada pushujemo ovaj screen u stack of screens ne dobijamo odmah te podatke, zapravov korisnik moze da interaguje sa tim skrinom i on moce mzd ici nazad (stisnuti back) nakon 10s, 10min, ili 10 hours, mi to ne znamo. I zato se zove Future, ne vracamo dostupne vrednosti odmah vec negde u nekom buducem trenutku kada korisnik odluci da naviguje nazad.
       Da bismo koristili ovde Future, u ovoj _setScreen fn dodajemo async da bismo ovde mogli da kor await i sacuvamo u result varijabli> ali to ce da se desi kada korisnik ode unazad, moramo dakle da cekamo na to tj await-ujemo da se to desi. 
       Takodje, ispred .push cemo dodati angular brackets <> i tu definisati koje podatke ocekujemo da se vrate by push. Kao i za sve genericke tipove kor <>. Map je sam po sebi genericki tip pa i njemu stavljamo <> gde stavljamo Filter enum da bude key, a value da bude bool jer imamo booleans */
-      final result = await Navigator.of(context).push<Map<Filter, bool>>(
+      // @ takodje nam ne treba final result jer vise ne treba da dohvatamo ove podatke od kad dodajemo filters_provider.dart jer se sve tamo dogadja
+      // final result = await Navigator.of(context).push<Map<Filter, bool>>(
+      await Navigator.of(context).push<Map<Filter, bool>>(
         MaterialPageRoute(
           // inace da se ne bi resetovali filteri kada idemo nazad na FiltrersScreen, moramo proslediti currentFilters u FiltersScreen
-          builder: (ctx) => FiltersScreen(currentFilters: _selectedFilters),
+          //@ brisemo currentFilters: _selectedFilters jer dodajemo filters_provider.dart
+          // builder: (ctx) => FiltersScreen(currentFilters: _selectedFilters),
+          builder: (ctx) => const FiltersScreen(),
         ),
       );
       // print(result); // output: {Filter.glutenFree: true, Filter.lactoseFree: false, Filter.vegetarian: true, Filter.vegan: false}
@@ -125,9 +129,10 @@ void _toggleMealFavoriteStatus(Meal meal) {
       Ovde setujemo _selectedFilter kada god dodjemo sa FiltersScreen-a, isada ove _selectedFilter mozemo da koristimo da bismo apdejtovali meals koje cemo prikazati onda kada izaberemo kategoriju na CategoriesScreen. Pa sada kada prosledjujemo filter podatke u CategoriesScreen imamo dve glavne opcije:
       1. Mozemo ili da prosledimo listu dostupnih jela koji potom mogu biti izabrani i korisceni unutar CategoriesScreen-a, ili 
       2. Da prosledimo filters i dodamo logiku za filtriranje jela u ovaj CategoriesScreen */
-      setState(() {
-        _selectedFilters = result ?? kInitalFilters;
-      });
+      //@ brisemo jer dodajemo filters_provider.dart
+      // setState(() {
+      //   _selectedFilters = result ?? kInitalFilters;
+      // });
     }
     //  else {
     //   /* za else je 'meals' a tada loadujemo TabsScreen. Al ono sto je bitno ovde za else, jeste da imamo na umu da mi vec jesmo na TabsScreen-u.
@@ -172,6 +177,23 @@ void _toggleMealFavoriteStatus(Meal meal) {
     ! kada koristimo Flutter Riverpod, moramo da idemo u main.dart i u void main() { runApp(const App()) } wrapujemo ovo const App() u ProviderScope() widget i time unlockujemo ovaj behind the scenes state management f-naliti, a wrapujemo citav App() da bi svi wigeti u citavoj app mogli koristiti ove Riverpod feature. Dakle ako znamo da bi samo odredjen deo app koristio te feature, onda mozemo samo taj deo da wrapujemo u PRoviderScope */
     final meals = ref.watch(mealsProvider);
 
+    final activeFilters = ref.watch(filtersProvider);
+
+    final availableMeals = meals.where((meal) {
+      if (activeFilters[Filter.glutenFree]! && !meal.isGlutenFree) {
+        return false;
+      }
+      if (activeFilters[Filter.lactoseFree]! && !meal.isLactoseFree) {
+        return false;
+      }
+      if (activeFilters[Filter.vegetarian]! && !meal.isVegetarian) {
+        return false;
+      }
+      if (activeFilters[Filter.vegan]! && !meal.isVegan) {
+        return false;
+      }
+
+      /* @ menjamo  jer dodajemo filters_provider.dart   
     final availableMeals = meals.where((meal) {
       if (_selectedFilters[Filter.glutenFree]! && !meal.isGlutenFree) {
         return false;
@@ -185,6 +207,7 @@ void _toggleMealFavoriteStatus(Meal meal) {
       if (_selectedFilters[Filter.vegan]! && !meal.isVegan) {
         return false;
       }
+      */
 
       // bez ovoga ovde samo imamo gomilu cekera koji potencijalno vracaju false, ali nikad ne vracamo true za jela koja ustvari zelimo da zadrzimo
       return true;
