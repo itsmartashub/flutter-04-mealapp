@@ -25,6 +25,9 @@ class MealDetailsScreen extends ConsumerWidget {
 /* @ SA flutter_riverpod 
 ! Dodajemo  drugi parametar WidgetRef ref, dakle type WidgetRef koji nam je potreban za osluskivanje provajdera. Ovo nismo morali da radimo u tabs.dart jer tamo imamo State klasu i zamenjujemo je sa ConsumerState koji cini ovaj ref property dostupnim globalno u toj klasi, a ovde u StatelessWidgetu je drugacije. Ovde nemamo ovaj geenralni ref property, vec ga moramo dodati ovde kao parametar build metodu */
   Widget build(BuildContext context, WidgetRef ref) {
+    final favoriteMeals = ref.watch(favoriteMealsProvider);
+    final isFavorite = favoriteMeals.contains(meal);
+
     // Scaffold jer je brand new screen
     return Scaffold(
       appBar: AppBar(
@@ -54,9 +57,7 @@ class MealDetailsScreen extends ConsumerWidget {
                 ),
               );
             },
-            icon: const Icon(
-              Icons.star,
-            ),
+            icon: Icon(isFavorite ? Icons.star : Icons.star_border),
           )
         ],
       ),
