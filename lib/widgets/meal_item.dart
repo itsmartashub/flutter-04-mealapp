@@ -45,7 +45,7 @@ class MealItem extends StatelessWidget {
                 ``` dart pub add transparent_image
             Da bismo to prikazali adekvatno tu cemo koristiti MemoryImage() flutter klasu koja zna kako da ucita slike iz memorije. A u MemoryImage prosledjujemo kTransparentImage koju importujemo iz transparent_image paketa.
             Slika ce biti NetworkImage, tj slika sa neta,a link sa to se nalazi u nasem dummy-data za Meal u imageUrl propertiju */
-            FadeInImage(
+            /*  FadeInImage(
               placeholder: MemoryImage(kTransparentImage),
               image: NetworkImage(meal.imageUrl),
               // kao u css za image object-fit: cover
@@ -53,6 +53,24 @@ class MealItem extends StatelessWidget {
               height: 200,
               // width: double.infinity kao u css width: max-width; koliko god moze horizontalno da zauzme mesto
               width: double.infinity,
+            ), */
+
+            //@ SCREENS TRANSITIONS - #COMMINGFROM place
+            /* ? Hero
+            - Ovaj flutter widget sluzi da animira widgete izmedju razlicitih widgeta, izmedju razlicitih skrinova.
+            Potreban mu je tag koji sluzi za identifikovanje widgeta na ovom skrinu i na target skrinu. Tag treba da bude unikatan za svaki widget.
+            I sada treba da idemo na mesto gde zelimo da idemo (kaorecimo s jedne stranice idemo na drugu, pa je taj odlazak tj dolazak na drugu animirano, tako i ovde). Ovo je mesto "coming from", a sad idemo na mesto koje je "going to" a to je meals_details.dart skrin i pronalazimo widget kom zelimo da animiramo, a to je u ovom slucaju Image.network i njega wrapujemo u Hero() takodje */
+            Hero(
+              tag: meal.id,
+              child: FadeInImage(
+                placeholder: MemoryImage(kTransparentImage),
+                image: NetworkImage(meal.imageUrl),
+                // kao u css za image object-fit: cover
+                fit: BoxFit.cover,
+                height: 200,
+                // width: double.infinity kao u css width: max-width; koliko god moze horizontalno da zauzme mesto
+                width: double.infinity,
+              ),
             ),
 
             /* ? Positioned Widget
