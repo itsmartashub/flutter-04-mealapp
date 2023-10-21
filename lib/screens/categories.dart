@@ -102,34 +102,61 @@ class _CategoriesScreenState extends State<CategoriesScreen>
     // body ja main page content
     body: GridView( */
     return AnimatedBuilder(
-        animation: _animationController,
-        child: GridView(
-          padding: const EdgeInsets.all(24),
-          // da kazemo koliko kolona treba da bude. crossAxisCount je s leva u desno, dakle horizontalno imam dve kolone. childAspectRatio sto se odnosi na velicinu grid itema
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 3 / 2, // isto sto i 1.5 ???
-            crossAxisSpacing: 20, // horizontalni razmak izmedju itema
-            mainAxisSpacing: 20, // vertikalni razmak izmedju itema
-          ),
-          children: [
-            // availableCategories.map((category) => CategoryGridItem(category: category)).toList()  je isto sto i ovo dole sa for-in
-            for (final category in availableCategories)
-              CategoryGridItem(
-                category: category,
-                onSelectCategory: () {
-                  _selectCategory(context, category);
-                },
-              ),
-          ],
+      animation: _animationController,
+      child: GridView(
+        padding: const EdgeInsets.all(24),
+        // da kazemo koliko kolona treba da bude. crossAxisCount je s leva u desno, dakle horizontalno imam dve kolone. childAspectRatio sto se odnosi na velicinu grid itema
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 3 / 2, // isto sto i 1.5 ???
+          crossAxisSpacing: 20, // horizontalni razmak izmedju itema
+          mainAxisSpacing: 20, // vertikalni razmak izmedju itema
         ),
-        /* Padding ce biti widget koji ce biti animiran ciji ce child biti setovan na ovaj child od gore sto je GridView. gridView bi trebalo tehnicki da bude prikazan u Padding-u, ali nece se rebuild-ovati i reevaluated 60 x u sekundi (ako je animacija minut sa 60fps), vec ce se samo Padding rebuild-ovati.
+        children: [
+          // availableCategories.map((category) => CategoryGridItem(category: category)).toList()  je isto sto i ovo dole sa for-in
+          for (final category in availableCategories)
+            CategoryGridItem(
+              category: category,
+              onSelectCategory: () {
+                _selectCategory(context, category);
+              },
+            ),
+        ],
+      ),
+      /* Padding ce biti widget koji ce biti animiran ciji ce child biti setovan na ovaj child od gore sto je GridView. gridView bi trebalo tehnicki da bude prikazan u Padding-u, ali nece se rebuild-ovati i reevaluated 60 x u sekundi (ako je animacija minut sa 60fps), vec ce se samo Padding rebuild-ovati.
         Animiracemo EdgeInsets.only gde cemo dinamicki setovati value za top. Da bismo pokrenuli animaciju moramo to explicitno da uradimo sa forward, tj _animationController.forward(); */
-        builder: (context, child) => Padding(
+      /* builder: (context, child) => Padding(
             padding: EdgeInsets.only(
               top: 100 - _animationController.value * 100,
             ),
-            child: child));
+            child: child)*/
+
+      /* ? drive(), Tween(). .animate(), Offset(), CurvedAnimation()
+        - drive() metod moze da sluzi da se builduje animacija u zavisnosti od neke druge vrednosti. Dodje mu kao transition u css-u, drive() translate-uje vrednosti izmedju lowerBound i upperBound tj 0 i 1.  Opisuje transition beTWEEN 2 vrednosti, tako da Tween uzima za vrednost dve vrednosti: begin i end.
+        - Offset takes 2 doubles, tj dva decimalna broja: X-axis i Y-axis. 0 znaci da nema Offseta, a 1 znaci da je offset 100% na kraju. Kao u css-u vrednosti za transform property (translate(0, 0) itd).
+        Ovakva transition je bolje optimizovana od Padding, isto kao i u CSS-u.
+        Na drive() mozemo pozvati animate() metod koji takodje vraca animaciju, tako da cemo _animationController.drive zameniti sa animate(). U animate mozemo proslediti KAKO je animacija playng back??
+        Parent u CurvedAnimation je _animationController tj stvar koja kontrolise animaciju, a curve je fazon transition-timing-function u CSS-u (efekat) 
+         */
+      builder: (context, child) => SlideTransition(
+/*         position: _animationController.drive(
+          Tween(
+            begin: const Offset(0, 0.3),
+            end: const Offset(0, 0),
+          ).animate(parent),
+        ), */
+        position: Tween(
+          begin: const Offset(0, 0.3),
+          end: const Offset(0, 0),
+        ).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeInOut,
+          ),
+        ),
+        child: child,
+      ),
+    );
     // );
   }
 }
