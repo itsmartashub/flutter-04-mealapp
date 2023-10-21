@@ -57,7 +57,18 @@ class MealDetailsScreen extends ConsumerWidget {
                 ),
               );
             },
-            icon: Icon(isFavorite ? Icons.star : Icons.star_border),
+            // zalimo da animiramo samo ikonicu, dakle ne citvo dugme
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              // ne trba da kreiramo animaciju rucno ovdem vec je ovo animation kreirano od strane Fluttera, zato se ovo zove implicitna animacija; AnimatedSwitcher ce to sve za nas da uradi behind-the-sceen: kreirace animaciju i startovati je, a startovace je kad god se child promeni, automatski ce to detektovati i pokrenuti animaciju. transitionBuilder mora da vrati widget, ali ne bilo koji vec neki od transition widgeta, jer ono opisuje KAKO zelimo da animiramo. child je widhet koji ce prihvatiti ovuu rotacionu animaciju, a to je na kraju ovaj child: Icon(isFavorite ? Icons.star : Icons.star_border)
+              transitionBuilder: (child, animation) {
+                return RotationTransition(
+                  turns: animation,
+                  child: child,
+                );
+              },
+              child: Icon(isFavorite ? Icons.star : Icons.star_border),
+            ),
           )
         ],
       ),
